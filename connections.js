@@ -1,3 +1,6 @@
+// Toggle link modes
+var linkMode = 0;
+
 function drawConnections(node){
   ctx.strokeStyle = "black"
   for(var i = 0; i < node.connections.length; i++){
@@ -27,10 +30,22 @@ function toggleConnectNodes(nodeA, nodeB){
       nodeB.connections.push(nodeA)
     }
   }
-
   // reverts colour in case they have been selected (they have been)
-  nodeA.colour = "black"
-  nodeB.colour = "black"
+  switch(linkMode){
+    case 1:
+      nodesToLink[0].colour = "black"
+      nodesToLink.shift()
+      break;
+    case 2:
+    nodesToLink[1].colour = "black"
+      nodesToLink.pop()
+      break;
+    default:
+      nodeA.colour = "black"
+      nodeB.colour = "black"
+      nodesToLink = []
+
+  }
 }
 
 // returns true if two nodes are connected to each other

@@ -3,13 +3,37 @@
   <head>
     <meta charset="utf-8">
     <title>circuit project</title>
+
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
 
     <canvas id="canvas" width="1200" height="800"></canvas>
+
     <img id="resistorSprite" src="res/resistorSprite.png" alt="" width="0" height="0">
-    <img id="voltageSprite" src="res/voltageSprite.png" alt="" width="0" height="0">
-    <img id="currentSprite" src="res/currentSprite.png" alt="" width="0" height="0">
+
+    <img id="voltageSprite0" src="res/voltageSprite.png" alt="" width="0" height="0">
+    <img id="voltageSprite90" src="res/voltageSprite90.png" alt="" width="0" height="0">
+    <img id="voltageSprite180" src="res/voltageSprite180.png" alt="" width="0" height="0">
+    <img id="voltageSprite270" src="res/voltageSprite270.png" alt="" width="0" height="0">
+
+    <img id="currentSprite0" src="res/currentSprite.png" alt="" width="0" height="0">
+    <img id="currentSprite90" src="res/currentSprite90.png" alt="" width="0" height="0">
+    <img id="currentSprite180" src="res/currentSprite180.png" alt="" width="0" height="0">
+    <img id="currentSprite270" src="res/currentSprite270.png" alt="" width="0" height="0">
+    <div class="">
+      <form id="dataSheetForm" hidden action="index.html" method="post">
+        <label class="data-form" for="voltage-input">Voltage: </label>
+        <input class="data-form data-input" id="voltage-input" type="text" name="" value="">
+        <label class="data-form" for="current-input">Current: </label>
+        <input class="data-form data-input" id="current-input" type="text" name="" value="">
+        <label class="data-form" for="resistance-input">Resistance: </label>
+        <input class="data-form data-input" id="resistance-input" type="text" name="" value="">
+        <button class="data-form" id="data-submit" type="button" name="button"  onclick="submitData()">Change</button>
+      </form>
+    </div>
+
+
 
 
     <!-- jQuery -->

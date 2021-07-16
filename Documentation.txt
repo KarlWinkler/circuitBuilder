@@ -6,10 +6,11 @@ States:
     multiLink: the first node selected will not be unlinked unless you click away (TODO)
   Delete: delete a node
   Resistor: place a resistor node that can be connected to other nodes with the link tool (max connections = 2
+
   VoltageSrc: places a voltage source in the vertical orientation which can be connected to two other nodes
-    rotated: places horizontally instead
   CurrentSrc: places a current source in the vertical orientation which can be connected to two other nodes
-    rotated: places horizontally instead
+  both have the option to rotate the node 0 -> 90 -> 180 -> 270 -> 0
+
 
 Hotkeys:
   q -> Wire mode
@@ -18,3 +19,6 @@ Hotkeys:
   r -> Resistor mode
   s -> Snap to grid toggle
   , -> snapLink toggle
+  [ -> decrement angle
+  ] -> increment angle
+  l -> increment to next link mode

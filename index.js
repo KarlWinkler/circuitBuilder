@@ -1,6 +1,6 @@
 // Author: Karl Winkler
-// Version 2.0 (idk how to count this shit)
-// As of: 2021-07-14
+// Version 3.0 (I think I'm doing this right)
+// Last Updated: 2021-07-15
 
 // general information
 
@@ -13,7 +13,7 @@
 // constants
 
 //number of implemented states
-const totalStates = 6
+const totalStates = 7
 // margin for the canvase (to determine 0,0)
 const margin = 8
 //size of different nodes
@@ -21,14 +21,16 @@ const wireRadius = 5
 const resistorRadius = 10
 const voltageRadius = 10 // replace resistorRadius later where appropriate
 const currentRadius = 10 // same as above
-
+//different state numbers
+const wireNum = 0, linkNum = 1, selectNum = 2, deleteNum = 3, resistorNum = 4
+const voltageNum = 5, currentNum = 6
 
 //arrays
 
 // array of graph objects
 var graphArr = []
-//array of selected nodes
-var selectedNodes = []
+//array of nodes that will be linked (should only ever hold 2)
+var nodesToLink = []
 
 // state variables
 
@@ -43,10 +45,15 @@ var clickState = 0;
 var snapToGrid = true;
 //toggle snapLink feature
 var snapLink = true;
+//rotation state of voltage and current
+var setRotation = 0;
 
 //x and y of mouse on the page
 var pageX = 0;
 var pageY = 0;
+
+// selected node
+var selectedNode;
 
 // onClick event listeners
 $("#canvas").click(leftClick) // left Click
@@ -66,6 +73,7 @@ function draw() {
   drawSnapCircle();
   drawCirtcuit();
   drawMenu();
+  drawSubMenu();
   // console.log(clickState)
   window.requestAnimationFrame(draw);
 }
@@ -87,6 +95,11 @@ function Node(type, x, y, radius, connections){
   this.radius = radius;
   this.rotation = 0;
   this.colour = "black"
+
+  this.voltage = 0;
+  this.current = 0;
+  this.resistance = 0;
+
   graphArr.push(this);
 }
 // var Node = {
@@ -96,18 +109,11 @@ function Node(type, x, y, radius, connections){
 //   connections: [4]
 // };
 
-//starting point of the graph
-var n1 = new Node("wire", 50, 50, wireRadius, []);
-var n2 = new Node("wire", 100, 100, wireRadius, []);
-var n3 = new Node("wire", 100, 50, wireRadius, []);
-toggleConnectNodes(n1, n2);
-toggleConnectNodes(n2, n3);
-
-//update cycle
+//update cycle for the circuit elements
 function drawCirtcuit(){
-  if(selectedNodes.length > 1){
-    toggleConnectNodes(selectedNodes[0], selectedNodes[1])
-    selectedNodes = []
+  if(nodesToLink.length > 1){
+    toggleConnectNodes(nodesToLink[0], nodesToLink[1])
+
   }
   drawNodes();
 }
@@ -120,18 +126,37 @@ function drawNodes(){
   }
 
   for(i = 0; i < graphArr.length; i++){
-    switch(graphArr[i].type){
+    // because I want to be clearer and it gets used a lot
+    node = graphArr[i]
+
+    drawSmallData(node)
+    // determine colour, in decending order of heierarchy
+    if(equateNodes(node,selectedNode)){
+      node.colour = "red"
+      ctx.strokeStyle = "black"
+      circle(node.x, node.y, node.radius + 3)
+      drawDataSheet(node)
+    }
+    else if(isSelectedToLink(graphArr[i])){
+      node.colour = "orange"
+    }
+    else{
+      node.colour = "black"
+    }
+
+
+    switch(node.type){
       case "wire":
-        drawWire(graphArr[i]);
+        drawWire(node);
         break;
       case "resistor":
-        drawResistor(graphArr[i]);
+        drawResistor(node);
         break;
       case "voltageSrc":
-        drawVoltageSrc(graphArr[i]);
+        drawVoltageSrc(node);
         break;
       case "currentSrc":
-        drawCurrentSrc(graphArr[i]);
+        drawCurrentSrc(node);
         break;
     }
   }
@@ -143,55 +168,47 @@ function drawWire(node){
   if(node.connections.length == 0){
     circle(node.x, node.y, node.radius)
   }
-  else if(isSelected(node) || node.connections.length == 1){
+  else if(isSelectedToLink(node) || node.connections.length == 1){
       circle(node.x, node.y, node.radius)
   }
   else {
-    ctx.strokeStyle = "rgba(0,0,0,0.3)"
+    ctx.strokeStyle = "rgba(0,0,0,0.2)"
     circle(node.x, node.y, node.radius)
   }
-
-
 }
 
+// draws the resistor nodes
 function drawResistor(node){
   var img = $("#resistorSprite").get(0)
   ctx.drawImage(img, node.x - node.radius , node.y - node.radius, node.radius*2, node.radius*2)
-  if(isSelected(node)){
-    ctx.strokeStyle = "orange"
-  }
-  else{
-    ctx.strokeStyle = node.colour
-  }
+  ctx.strokeStyle = node.colour
   circle(node.x, node.y, node.radius)
 }
 
+// draws voltage source
 function drawVoltageSrc(node){
-  var img = $("#voltageSprite").get(0)
+  var img = $("#voltageSprite" + node.rotation).get(0)
   ctx.drawImage(img, node.x - node.radius , node.y - node.radius, node.radius*2, node.radius*2)
-  if(isSelected(node)){
-    ctx.strokeStyle = "orange"
+  ctx.strokeStyle = node.colour
+  if(isSelectedToLink(node) || equateNodes(node, selectedNode)){
     circle(node.x, node.y, node.radius)
   }
-  else{
-    ctx.strokeStyle = node.colour
-  }
 }
 
+// draws current source
 function drawCurrentSrc(node){
-  var img = $("#currentSprite").get(0)
+  var img = $("#currentSprite" + node.rotation).get(0)
   ctx.drawImage(img, node.x - node.radius , node.y - node.radius, node.radius*2, node.radius*2)
-  if(isSelected(node)){
-    ctx.strokeStyle = "orange"
-  }
-  else{
-    ctx.strokeStyle = node.colour
-  }
+  ctx.strokeStyle = node.colour
   circle(node.x, node.y, node.radius)
 }
 
-// returns true if twu nodes are equal (same x and y)
+// returns true if two nodes are equal (same x and y)
 function equateNodes(nodeA, nodeB){
+  if(nodeA == null || nodeB == null){
+    return false;
+  }
+  // compare x and y because they should be unique, bugs withstanding
   if(nodeA.x == nodeB.x && nodeA.y == nodeB.y){
     return true;
   }
@@ -201,77 +218,97 @@ function equateNodes(nodeA, nodeB){
 // handles the behaviours of leftClick depending on the state
 // snaps x,y to grid if snapToGrid is true
 
-// State 0: add wire, creates a node at the x,y values if there is not a node already there
+// State wireNum: add wire, creates a node at the x,y values if there is not a node already there
 
-// State 1: select a node if there is a node where x,y is
+// State LinkNum: select a node if there is a node where x,y is
 // deselects nodes if there is no node or an already selected node
 
-// State 2: deletes a node at x,y
+// State deleteNum: deletes a node at x,y
 
-// State 3: add resistor, adds a resistor node with the same conditions as add wire
+// State resistorNum: add resistor, adds a resistor node with the same conditions as add wire
 
-// State 4: add voltageSrc, adds a voltage source node with the same conditions as add wire
+// State voltageNum: add voltageSrc, adds a voltage source node with the same conditions as add wire
 
-// State 5: add currentSrc, adds a current source node with the same conditions as add wire
+// State currentNum: add currentSrc, adds a current source node with the same conditions as add wire
+
+//State selectNum: select nodes and make changes to the node data
+
 function leftClick(){
   var x = event.pageX - margin
   var y = event.pageY - margin
 
   if(snapToGrid && clickState != 1 || snapToGrid && clickState == 1 && snapLink){
-    x = Math.round(x/40)*40;
-    y = Math.round(y/40)*40;
+    x = Math.round(x/gridSize)*gridSize;
+    y = Math.round(y/gridSize)*gridSize;
   }
 
   switch(clickState){
-    case 0: // add Wire
+    case wireNum: // add Wire
       if(validLocation(x, y)){
         new Node("wire", x, y, wireRadius, []);
       }
       break;
-    case 1: // Select
-      if(!validLocation(x, y)){
+    case linkNum: // link mode
+      if(!validLocation(x, y) && x < width - selectedBoxWidth){
         var node = getNodeClicked(x, y)
-        if(!isSelected(node)){
-          node.colour = "orange"
-          selectedNodes.push(node)
+        if(!isSelectedToLink(node)){
+          // node.colour = "orange"
+          nodesToLink.push(node)
         }
         else{
-          for(var i = 0; i < selectedNodes.length; i++){
-            if(equateNodes(node, selectedNodes[i])){
-              selectedNodes.splice(i, 1);
+          for(var i = 0; i < nodesToLink.length; i++){
+            if(equateNodes(node, nodesToLink[i])){
+              nodesToLink.splice(i, 1);
             }
           }
           node.colour = "black"
         }
       }
       else{
-        for(var i = 0; i < selectedNodes.length; i++){
-          selectedNodes[i].colour = "black"
+        for(var i = 0; i < nodesToLink.length; i++){
+          nodesToLink[i].colour = "black"
         }
-        selectedNodes = []
+        nodesToLink = []
       }
       break;
-    case 2: // Delete
-      if(!validLocation(x, y)){
+    case deleteNum: // Delete
+      if(!validLocation(x, y) && x < width - selectedBoxWidth){
         var node = getNodeClicked(x, y)
         deleteNode(node);
       }
       break;
-    case 3: // add Resistor
+    case resistorNum: // add Resistor
       if(validLocation(x, y)){
         new Node("resistor", x, y, resistorRadius, []);
       }
       break;
-    case 4: // add voltageSrc
+    case voltageNum: // add voltageSrc
       if(validLocation(x, y)){
-        new Node("voltageSrc", x, y, resistorRadius, []);
+        node = new Node("voltageSrc", x, y, resistorRadius, []);
+        node.rotation = setRotation
       }
       break;
-    case 5: // add currentSrc
+    case currentNum: // add currentSrc
       if(validLocation(x, y)){
-        new Node("currentSrc", x, y, resistorRadius, []);
+        node = new Node("currentSrc", x, y, resistorRadius, []);
+        node.rotation = setRotation
       }
       break;
+    case selectNum: // select mode
+      if(!validLocation(x, y) && x < width - selectedBoxWidth){
+        selectedNode = getNodeClicked(x, y)
+        // sets the values of the input boxes when the node is selected
+        $("#voltage-input").prop('value', selectedNode.voltage)
+        $("#current-input").prop('value', selectedNode.current)
+        $("#resistance-input").prop('value', selectedNode.resistance)
+        $("#dataSheetForm").show();
+      }
+      else{
+        selectedNode = null;
+        $("#dataSheetForm").hide();
+      }
+      break;
+
   }
   console.log(x + " " + y);
 }
@@ -290,7 +327,7 @@ function deleteNode(node){
       }
     }
   }
-  selectedNodes = [];
+  nodesToLink = [];
 }
 
 // draws the circle that indicates where the click will be snapped to
@@ -321,6 +358,9 @@ $(document).keydown(function keyPressHandler(event){
     case 89: //y
       clickState = 5
       break;
+    case 85: //u
+      clickState = 6
+      break;
 
     // toggles snap to grid
     case 83: //s
@@ -331,30 +371,51 @@ $(document).keydown(function keyPressHandler(event){
       snapLink = !snapLink
       break;
 
-  } // end of SWITCH statement
+    //changes setRotation
+    case 221: //]
+      if(setRotation < 270){
+        setRotation += 90;
+      }
+      else{
+        setRotation = 0;
+      }
+      break;
+    case 219: //[
+      if(setRotation > 0){
+        setRotation -= 90;
+      }
+      else{
+        setRotation = 270;
+      }
+      break;
 
-  //increment state (keep incase I want to implement later)
-    // if(clickState < totalStates - 1){
-    //   clickState++;
-    // }
-    // else{
-    //   clickState = 0;
-    // }
+    case 76: //l
+      if(linkMode < 2){
+        linkMode++;
+      }
+      else{
+        linkMode = 0
+      }
 
-}); // end of KEYDOWN Listener
+    // submits data from the form
+    case 13: //enter
+      submitData()
+  }
+});
 
-
+// mouse move used to set pageX and pageY for global coords (used to move the indicator circle arround)
 $("#canvas").mousemove(function(event) {
   var x = event.pageX - margin
   var y = event.pageY - margin
 
   if(snapToGrid){
-    x = Math.round(x/40)*40;
-    y = Math.round(y/40)*40;
+    x = Math.round(x/gridSize)*gridSize;
+    y = Math.round(y/gridSize)*gridSize;
   }
   pageX = x;
   pageY = y;
 });
+
 
 // returns true if the node is able to be placed
 // a node cannot be on top of another node
@@ -381,9 +442,9 @@ function validLocation(x, y){
 }
 
 // returns true if a node is selected (in the selected nodes array)
-function isSelected(node){
-  for(var i = 0; i < selectedNodes.length; i++){
-    if(node == selectedNodes[i]){
+function isSelectedToLink(node){
+  for(var i = 0; i < nodesToLink.length; i++){
+    if(equateNodes(node, nodesToLink[i])){
       return true;
     }
   }
