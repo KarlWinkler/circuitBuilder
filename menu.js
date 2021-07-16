@@ -174,6 +174,9 @@ function submitData(){
 
 // draws the small (quick reference)  data that goes beside each node
 function drawSmallData(node){
+  if(node.type == "wire"){
+    return;
+  }
   ctx.fillStyle = "rgba(0,0,0,0.7)"
   ctx.font = "10px monospace"
   ctx.fillText("v: " + node.voltage, node.x + node.radius, node.y + 12.5)
