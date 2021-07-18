@@ -26,7 +26,8 @@ const dataSheetWidth = 160
 //datasheet height
 const dataSheetHeight = 200
 
-// nodeEnum variables
+// variables
+
 // location of the nodes name in the stateNames array
 var nodeNum = 0;
 // array for permitting changes to voltage/current/resistance
@@ -35,9 +36,7 @@ var nodeDataSettings = [];
 // listeners
 $("#canvas").click(menuClick) // Left click check for menus
 
-//colour variables (should probably be constants)
-var lineColour = "rgba(75,75,75,1)"
-var textColour = "rgba(30,30,30,1)"
+
 
 // draws the sidebar menu
 function drawMenu(){
@@ -45,7 +44,7 @@ function drawMenu(){
   ctx.strokeStyle = lineColour
   for(var i = 0; i < totalStates; i++){
     if(i == clickState){
-      ctx.fillStyle = "rgba(255, 0, 0, 0.5)"
+      ctx.fillStyle = mainColour
       rectangleFill(width-selectedBoxWidth, currentY, selectedBoxWidth, selectedBoxHeight)
       rectangle(width-selectedBoxWidth, currentY, selectedBoxWidth, selectedBoxHeight)
       ctx.font = "20px sans-serif"
@@ -57,7 +56,7 @@ function drawMenu(){
       currentY += selectedBoxHeight
     }
     else{
-      ctx.fillStyle = "rgba(255, 0, 0, 0.1)"
+      ctx.fillStyle = secondaryColour
       rectangleFill(width-boxWidth, currentY, boxWidth, boxHeight)
       rectangle(width-boxWidth, currentY, boxWidth, boxHeight)
 
@@ -73,7 +72,7 @@ function drawMenu(){
 
 //draws the background grid
 function drawGrid(){
-  ctx.strokeStyle = "rgba(0,0,0,0.1)"
+  ctx.strokeStyle = gridColour
   for(var i = 0; i < height; i+=gridSize){
     line(0, i, width, i)
   }
@@ -120,7 +119,7 @@ function subMenu(labels, index){
   for(var i = 0; i < menues; i++){
     if(labels[i*2+1]){
       ctx.strokeStyle = lineColour
-      ctx.fillStyle = "rgba(255, 0, 0, 0.5)";
+      ctx.fillStyle = mainColour
       rectangle(startX, height - labelHeight*2, labelWidth, labelHeight*2)
       rectangleFill(startX, height - labelHeight*2, labelWidth, labelHeight*2)
       ctx.font = "15px sans-serif"
@@ -130,7 +129,7 @@ function subMenu(labels, index){
     }
     else{
       ctx.strokeStyle = lineColour
-      ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+      ctx.fillStyle = secondaryColour
       rectangle(startX, height - labelHeight, labelWidth, labelHeight)
       rectangleFill(startX, height - labelHeight, labelWidth, labelHeight)
       ctx.font = "10px sans-serif"
@@ -148,7 +147,8 @@ function drawDataSheet(node){
 
   nodeEnum(node.type)
 
-  ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+  ctx.fillStyle = secondaryColour
+  ctx.strokeStyle = defaultColour
   rectangleFill(0, 0, dataSheetWidth, dataSheetHeight)
   rectangle(1, 1, dataSheetWidth, dataSheetHeight)
 
@@ -157,6 +157,9 @@ function drawDataSheet(node){
   //make the text starting y a variabole dependant on the node type when I make custom titles Switch
   ctx.fillText(stateNames[nodeNum], dataSheetWidth/8, dataSheetHeight/5)
   ctx.font = "16px sans-serif"
+
+  //fixing colour of text
+  $(".data-label").css("color", textColour )
 
   // disabling text boxes that shouldnt be changed (they can sdtill be changed in debug)
   $("#voltage-input").prop('disabled', !nodeDataSettings[0])
@@ -167,14 +170,17 @@ function drawDataSheet(node){
 // submits the data from the selected node
 // called from the Change button or the enter key
 function submitData(){
-  selectedNode.voltage = $("#voltage-input").val()[0]
-  selectedNode.current = $("#current-input").val()[0]
-  selectedNode.resistance = $("#resistance-input").val()[0]
+  selectedNode.voltage = $("#voltage-input").val()
+  selectedNode.current = $("#current-input").val()
+  selectedNode.resistance = $("#resistance-input").val()
 }
 
 // draws the small (quick reference)  data that goes beside each node
 function drawSmallData(node){
-  ctx.fillStyle = "rgba(0,0,0,0.7)"
+  if(node.type == "wire"){
+    return;
+  }
+  ctx.fillStyle = defaultColourMedium
   ctx.font = "10px monospace"
   ctx.fillText("v: " + node.voltage, node.x + node.radius, node.y + 12.5)
   ctx.fillText("c: " + node.current, node.x + node.radius, node.y + 21)
@@ -204,6 +210,36 @@ function menuClick(){
         }
       }
   }
+}
+
+function themeSelect(theme){
+  switch(theme){
+    case 0: // lightMode
+      updateTheme(["white", "black", "rgba(0,0,0,0.2)", "orange", "red", "black","rgba(75,75,75,1)",
+                   "rgba(30,30,30,1)", "rgba(0,0,0,0.1)", "rgba(255, 0, 0, 0.5)",
+                   "rgba(255, 0, 0, 0.1)", "rgba(0,0,0,0.7)"])
+      break;
+    case 1: // darkMode
+      updateTheme(["rgba(0,0,0,0.7)", "white", "rgba(255,255,255,0.2)", "orange",
+        "red", "rgba(255,255,255,0.7)", "rgba(150,150,150,1)", "rgba(200,200,200,1)", "rgba(255,255,255,0.1)",
+        "rgba(50,50,50,0.5)", "rgba(50,50,50,0.1)", "rgba(255,255,255,0.7)"])
+      break;
+  }
+}
+
+function updateTheme(colours){
+  backgroundColour = colours[0]
+  defaultColour = colours[1]
+  defaultColourLight = colours[2]
+  linkColour = colours[3]
+  selectColour = colours[4]
+  wireColour = colours[5]
+  lineColour = colours[6]
+  textColour = colours[7]
+  gridColour = colours[8]
+  mainColour = colours[9]
+  secondaryColour = colours[10]
+  defaultColourMedium = colours[11]
 }
 
 // useful information for each node type so that I dont have to type shit out all the timeout

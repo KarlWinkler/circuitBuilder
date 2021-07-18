@@ -21,17 +21,23 @@
     <img id="currentSprite90" src="res/currentSprite90.png" alt="" width="0" height="0">
     <img id="currentSprite180" src="res/currentSprite180.png" alt="" width="0" height="0">
     <img id="currentSprite270" src="res/currentSprite270.png" alt="" width="0" height="0">
-    <div class="">
-      <form id="dataSheetForm" hidden action="index.html" method="post">
-        <label class="data-form" for="voltage-input">Voltage: </label>
+    <!-- the div is here in case I want to do something with it and Im too lazy to get rid of it (now I need it for formating)-->
+    <div>
+      <div id="dataSheetForm" hidden>
+        <label class="data-form data-label" for="voltage-input">Voltage: </label>
         <input class="data-form data-input" id="voltage-input" type="text" name="" value="">
-        <label class="data-form" for="current-input">Current: </label>
+        <label class="data-form data-label" for="current-input">Current: </label>
         <input class="data-form data-input" id="current-input" type="text" name="" value="">
-        <label class="data-form" for="resistance-input">Resistance: </label>
+        <label class="data-form data-label" for="resistance-input">Resistance: </label>
         <input class="data-form data-input" id="resistance-input" type="text" name="" value="">
         <button class="data-form" id="data-submit" type="button" name="button"  onclick="submitData()">Change</button>
-      </form>
+      </div>
     </div>
+
+    <button type="button" name="button" onclick="themeSelect(0)">Light Mode</button>
+    <button type="button" name="button" onclick="themeSelect(1)">Dark Mode</button>
+
+    <button class="solve-button" type="button" name="button" onclick="solve()">Solve Circuit</button>
 
 
 
@@ -44,10 +50,21 @@
     <script src="shapeFunctions.js" charset="utf-8"></script>
     <!-- connection handling -->
     <script src="connections.js" charset="utf-8"></script>
+    <!-- circuit solving logic -->
+    <script src="solver.js" charset="utf-8"></script>
     <!-- menu render -->
     <script src="menu.js" charset="utf-8"></script>
     <!-- main -->
     <script src="index.js" charset="utf-8"></script>
+
+    <script type="text/javascript">
+
+    // this prevents an annoying form resubmission text box from poping up when you reload/leave the page
+    if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+    }
+
+    </script>
 
   </body>
 </html>

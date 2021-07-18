@@ -1,15 +1,20 @@
 States:
   Wire: place a wire node that can be connected to other nodes with the link tool (max connections = 4)
+
   Link: link or unlink two nodes by selecting them both, when two nodes have been linked or unlinked, all selections will be cleared
-    snapLink: this snaps your selection to the grid. stops you from clicking on unsnapped nodes
+    snapLink: this snaps your selection to the grid. stops you from clicking on unsnapped nodes (probably don't turn off unless you don't want to use snap to gird)
     continuousLink: when two nodes are connected only the first node that was selected will be deselected (TODO)
     multiLink: the first node selected will not be unlinked unless you click away (TODO)
+
   Delete: delete a node
-  Resistor: place a resistor node that can be connected to other nodes with the link tool (max connections = 2
+
+  Resistor: place a resistor node that can be connected to other nodes with the link tool (max connections = 2)
 
   VoltageSrc: places a voltage source in the vertical orientation which can be connected to two other nodes
   CurrentSrc: places a current source in the vertical orientation which can be connected to two other nodes
-  both have the option to rotate the node 0 -> 90 -> 180 -> 270 -> 0
+    both have the option to rotate the node 0 -> 90 -> 180 -> 270 -> 0
+
+  Select: select a node by clicking on it to bring up a menu to view and change the relevant data for that node
 
 
 Hotkeys:
@@ -22,3 +27,7 @@ Hotkeys:
   [ -> decrement angle
   ] -> increment angle
   l -> increment to next link mode
+
+
+Bonus Features:
+  Dark Mode and Light mode: select the button for the colour theme you prefer, also I might implement custom themes later

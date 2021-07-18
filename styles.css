@@ -6,19 +6,28 @@
   /* display: none; */
 }
 
+#resistance-input{
+  margin-left: 6px;
+}
+
+#data-submit{
+  margin: 20px 0 0 50px;
+}
+
 .data-form{
   margin-top: 10px;
 }
 
 .data-input{
-  margin-left: 20px;
+  margin-left: 26px;
   width: 25px;
 }
 
-#resistance-input{
-  margin-left: 0;
+.data-label{
+  font-family: sans-serif;
+  font-size: 13px;
 }
 
-#data-submit{
-  margin: 20px 0 0 50px;
+.solve-button{
+  margin-left: 700px;
 }

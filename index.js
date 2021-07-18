@@ -32,7 +32,7 @@ var graphArr = []
 //array of nodes that will be linked (should only ever hold 2)
 var nodesToLink = []
 
-// state variables
+// variables
 
 //current action that the click will perform
 //0 = new node
@@ -55,6 +55,21 @@ var pageY = 0;
 // selected node
 var selectedNode;
 
+//colour variables
+
+var backgroundColour = "white"
+var defaultColour = "black"
+var defaultColourLight = "rgba(0,0,0,0.2)"
+var linkColour = "orange"
+var selectColour = "red"
+var wireColour = "black"
+var lineColour = "rgba(75,75,75,1)"
+var textColour = "rgba(30,30,30,1)"
+var gridColour = "rgba(0,0,0,0.1)"
+var mainColour = "rgba(255, 0, 0, 0.5)"
+var secondaryColour = "rgba(255, 0, 0, 0.1)"
+var defaultColourMedium = "rgba(0,0,0,0.7)"
+
 // onClick event listeners
 $("#canvas").click(leftClick) // left Click
 // $(document).keydown(event, keyPressHandler) (somewhere arround line 250-300 )
@@ -65,10 +80,32 @@ var width = canvas.width
 var height = canvas.height
 var ctx = canvas.getContext("2d") // create the canvase
 
+
+
+
+//test circuit set up
+var one = new Node("wire", 510, 300, 5, [])
+var two = new Node("wire", 510, 180, 5, [])
+var three = new Node("wire", 660, 180, 5, [])
+var four = new Node("wire", 660, 300, 5, [])
+var five = new Node("resistor", 660, 240, 10, [])
+var six = new Node("voltageSrc", 510, 240, 10, [])
+toggleConnectNodes(one, six)
+toggleConnectNodes(six, two)
+toggleConnectNodes(two, three)
+toggleConnectNodes(three, five)
+toggleConnectNodes(five, four)
+toggleConnectNodes(four, one)
+five.resistance = 5;
+six.voltage = 13;
+
+
 // clears the canvas then draws the circuit and prints the current state for debug
 // calls itself after a delay with window.requestAnimationFrame()
 function draw() {
   ctx.clearRect(0, 0, width, height)
+  ctx.fillStyle = backgroundColour
+  rectangleFill(0, 0, width, height)
   drawGrid();
   drawSnapCircle();
   drawCirtcuit();
@@ -94,7 +131,7 @@ function Node(type, x, y, radius, connections){
   this.connections = connections;
   this.radius = radius;
   this.rotation = 0;
-  this.colour = "black"
+  this.colour = defaultColour
 
   this.voltage = 0;
   this.current = 0;
@@ -132,16 +169,15 @@ function drawNodes(){
     drawSmallData(node)
     // determine colour, in decending order of heierarchy
     if(equateNodes(node,selectedNode)){
-      node.colour = "red"
-      ctx.strokeStyle = "black"
+      ctx.strokeStyle = selectColour
       circle(node.x, node.y, node.radius + 3)
       drawDataSheet(node)
     }
-    else if(isSelectedToLink(graphArr[i])){
-      node.colour = "orange"
+    if(isSelectedToLink(graphArr[i])){
+      node.colour = linkColour
     }
     else{
-      node.colour = "black"
+      node.colour = defaultColour
     }
 
 
@@ -172,7 +208,7 @@ function drawWire(node){
       circle(node.x, node.y, node.radius)
   }
   else {
-    ctx.strokeStyle = "rgba(0,0,0,0.2)"
+    ctx.strokeStyle = defaultColourLight
     circle(node.x, node.y, node.radius)
   }
 }
@@ -190,7 +226,7 @@ function drawVoltageSrc(node){
   var img = $("#voltageSprite" + node.rotation).get(0)
   ctx.drawImage(img, node.x - node.radius , node.y - node.radius, node.radius*2, node.radius*2)
   ctx.strokeStyle = node.colour
-  if(isSelectedToLink(node) || equateNodes(node, selectedNode)){
+  if(isSelectedToLink(node)){
     circle(node.x, node.y, node.radius)
   }
 }
@@ -261,12 +297,12 @@ function leftClick(){
               nodesToLink.splice(i, 1);
             }
           }
-          node.colour = "black"
+          node.colour = defaultColour
         }
       }
       else{
         for(var i = 0; i < nodesToLink.length; i++){
-          nodesToLink[i].colour = "black"
+          nodesToLink[i].colour = defaultColour
         }
         nodesToLink = []
       }
@@ -332,7 +368,7 @@ function deleteNode(node){
 
 // draws the circle that indicates where the click will be snapped to
 function drawSnapCircle(){
-  ctx.strokeStyle = "rgba(0,0,0,0.2)"
+  ctx.strokeStyle = defaultColourLight
   circle(pageX, pageY, 12)
 }
 

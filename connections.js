@@ -2,7 +2,7 @@
 var linkMode = 0;
 
 function drawConnections(node){
-  ctx.strokeStyle = "black"
+  ctx.strokeStyle = wireColour
   for(var i = 0; i < node.connections.length; i++){
     line(node.x, node.y, node.connections[i].x, node.connections[i].y)
   }
@@ -33,16 +33,16 @@ function toggleConnectNodes(nodeA, nodeB){
   // reverts colour in case they have been selected (they have been)
   switch(linkMode){
     case 1:
-      nodesToLink[0].colour = "black"
+      nodesToLink[0].colour = defaultColour
       nodesToLink.shift()
       break;
     case 2:
-    nodesToLink[1].colour = "black"
+    nodesToLink[1].colour = defaultColour
       nodesToLink.pop()
       break;
     default:
-      nodeA.colour = "black"
-      nodeB.colour = "black"
+      nodeA.colour = defaultColour
+      nodeB.colour = defaultColour
       nodesToLink = []
 
   }
