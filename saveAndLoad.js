@@ -21,7 +21,7 @@ function save(){
   img.setAttribute('crossorigin', "anonymous");
   document.body.appendChild(img);
   // img.innerHTML = "image"
-  var saveImage = ctx.toDataURL("image/png").replace("image/png", "image/octet-stream");
+  var saveImage = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
   window.location.href=image;
   // console.log(canvas.toDataURL())
   img.setAttribute('src', saveImage);
