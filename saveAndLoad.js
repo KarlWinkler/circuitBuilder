@@ -35,7 +35,7 @@ function save(){
 /*
 type;x;y;radius;rotation;voltage;current;resistance;colour;\n
 //connections are saved as
-[type;x;y : type;x;y : type;x;y : etc]
+type;x;y : type;x;y : type;x;y : etc
 */
 function createSaveData(){
   var fileString = ""
