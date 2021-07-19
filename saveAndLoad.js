@@ -22,7 +22,7 @@ function save(){
   document.body.appendChild(img);
   // img.innerHTML = "image"
   var saveImage = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
-  window.location.href=image;
+  window.location.href=img;
   // console.log(canvas.toDataURL())
   img.setAttribute('src', saveImage);
   // var saveImage = canvas.toDataURL();
