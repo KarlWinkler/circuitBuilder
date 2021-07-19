@@ -111,7 +111,8 @@ function draw() {
   drawCirtcuit();
   drawMenu();
   drawSubMenu();
-  // console.log(clickState)
+  drawSmallData();
+  // console.log(graphArr)
   window.requestAnimationFrame(draw);
 }
 
@@ -166,7 +167,6 @@ function drawNodes(){
     // because I want to be clearer and it gets used a lot
     node = graphArr[i]
 
-    drawSmallData(node)
     // determine colour, in decending order of heierarchy
     if(equateNodes(node,selectedNode)){
       ctx.strokeStyle = selectColour

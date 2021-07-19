@@ -176,15 +176,18 @@ function submitData(){
 }
 
 // draws the small (quick reference)  data that goes beside each node
-function drawSmallData(node){
-  if(node.type == "wire"){
-    return;
+function drawSmallData(){
+  for(var i = 0; i < graphArr.length; i++){
+    node = graphArr[i]
+    if(node.type != "wire"){
+      ctx.fillStyle = defaultColourMedium
+      ctx.font = "10px monospace"
+      ctx.fillText("v: " + node.voltage, node.x + node.radius, node.y + 12.5)
+      ctx.fillText("c: " + node.current, node.x + node.radius, node.y + 21)
+      ctx.fillText("r: " + node.resistance, node.x + node.radius, node.y + 28.5)
+    }
   }
-  ctx.fillStyle = defaultColourMedium
-  ctx.font = "10px monospace"
-  ctx.fillText("v: " + node.voltage, node.x + node.radius, node.y + 12.5)
-  ctx.fillText("c: " + node.current, node.x + node.radius, node.y + 21)
-  ctx.fillText("r: " + node.resistance, node.x + node.radius, node.y + 28.5)
+
 }
 
 // detects clicks on the side bar menu
