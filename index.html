@@ -8,7 +8,12 @@
   </head>
   <body>
 
+
+
+
     <canvas id="canvas" width="1200" height="800"></canvas>
+
+    <!-- <button class="settings-button" type="button" name="button">Settings</button> -->
 
     <img id="resistorSprite" src="res/resistorSprite.png" alt="" width="0" height="0">
 
@@ -34,14 +39,18 @@
       </div>
     </div>
 
-    <button type="button" name="button" onclick="themeSelect(0)">Light Mode</button>
-    <button type="button" name="button" onclick="themeSelect(1)">Dark Mode</button>
+    <button class="lightMode-button" type="button" name="button" onclick="themeSelect(0)">Light Mode</button>
+    <button class="darkMode-button" type="button" name="button" onclick="themeSelect(1)">Dark Mode</button>
 
-    <button class="" type="button" name="button" onclick="save()">Save Circuit</button>
+    <button class="save-button" type="button" name="button" onclick="save()">Save Circuit</button>
 
     <button class="solve-button" type="button" name="button" onclick="solve()">Solve Circuit</button>
+    <br>
 
-
+    <div id="saveDiv" class="save-div">
+      <h1>Saved Circuits</h1>
+      <hr>
+    </div>
 
 
     <!-- jQuery -->

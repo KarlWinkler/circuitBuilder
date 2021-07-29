@@ -22,8 +22,22 @@ const resistorRadius = 10
 const voltageRadius = 10 // replace resistorRadius later where appropriate
 const currentRadius = 10 // same as above
 //different state numbers
-const wireNum = 0, linkNum = 1, selectNum = 2, deleteNum = 3, resistorNum = 4
-const voltageNum = 5, currentNum = 6
+const wireState = 0,
+linkState = 1,
+selectState = 2,
+deleteState = 3,
+resistorState = 4,
+voltageState = 5,
+currentState = 6
+
+// state Hotkeys
+const wireKey = 81, //q
+linkKey = 87, //w
+selectKey = 69, //e
+deleteKey = 82, //r
+resistorKey = 84, //t
+voltageKey = 89, //y
+currentKey = 85 //u
 
 //arrays
 
@@ -54,6 +68,9 @@ var pageY = 0;
 
 // selected node
 var selectedNode;
+
+// boolean for the data sheet think so that you can edit it
+var setDataSheet = false;
 
 //colour variables
 
@@ -159,6 +176,19 @@ function drawCirtcuit(){
 // draws all of the nodes thourough the graph from the graphArr
 function drawNodes(){
 
+  if(clickState == voltageState){
+    selectedNode = new Node("voltageSrc", -10, -10, 0, [])
+    graphArr.pop()
+  }
+  if(clickState == currentState){
+    selectedNode = new Node("currentSrc", -10, -10, 0, [])
+    graphArr.pop()
+  }
+  if(clickState == resistorState){
+    selectedNode = new Node("resistor", -10, -10, 0, [])
+    graphArr.pop()
+  }
+
   for(i = 0; i < graphArr.length; i++){
     drawConnections(graphArr[i])
   }
@@ -171,7 +201,6 @@ function drawNodes(){
     if(equateNodes(node,selectedNode)){
       ctx.strokeStyle = selectColour
       circle(node.x, node.y, node.radius + 3)
-      drawDataSheet(node)
     }
     if(isSelectedToLink(graphArr[i])){
       node.colour = linkColour
@@ -179,7 +208,6 @@ function drawNodes(){
     else{
       node.colour = defaultColour
     }
-
 
     switch(node.type){
       case "wire":
@@ -195,6 +223,18 @@ function drawNodes(){
         drawCurrentSrc(node);
         break;
     }
+  }
+  if(selectedNode != null && selectedNode.x == -10 && selectedNode.y == -10){
+
+    if(!setDataSheet){
+          console.log(selectedNode.type)
+      $("#voltage-input").prop('value', 0)
+      $("#current-input").prop('value', 0)
+      $("#resistance-input").prop('value', 0)
+      $("#dataSheetForm").show();
+      setDataSheet = true
+    }
+    drawDataSheet()
   }
 }
 
@@ -254,20 +294,20 @@ function equateNodes(nodeA, nodeB){
 // handles the behaviours of leftClick depending on the state
 // snaps x,y to grid if snapToGrid is true
 
-// State wireNum: add wire, creates a node at the x,y values if there is not a node already there
+// State wireState: add wire, creates a node at the x,y values if there is not a node already there
 
-// State LinkNum: select a node if there is a node where x,y is
+// State LinkState: select a node if there is a node where x,y is
 // deselects nodes if there is no node or an already selected node
 
-// State deleteNum: deletes a node at x,y
+// State deleteState: deletes a node at x,y
 
-// State resistorNum: add resistor, adds a resistor node with the same conditions as add wire
+// State resistorState: add resistor, adds a resistor node with the same conditions as add wire
 
-// State voltageNum: add voltageSrc, adds a voltage source node with the same conditions as add wire
+// State voltageState: add voltageSrc, adds a voltage source node with the same conditions as add wire
 
-// State currentNum: add currentSrc, adds a current source node with the same conditions as add wire
+// State currentState: add currentSrc, adds a current source node with the same conditions as add wire
 
-//State selectNum: select nodes and make changes to the node data
+//State selectState: select nodes and make changes to the node data
 
 function leftClick(){
   var x = event.pageX - margin
@@ -279,12 +319,12 @@ function leftClick(){
   }
 
   switch(clickState){
-    case wireNum: // add Wire
+    case wireState: // add Wire
       if(validLocation(x, y)){
         new Node("wire", x, y, wireRadius, []);
       }
       break;
-    case linkNum: // link mode
+    case linkState: // link mode
       if(!validLocation(x, y) && x < width - selectedBoxWidth){
         var node = getNodeClicked(x, y)
         if(!isSelectedToLink(node)){
@@ -301,36 +341,39 @@ function leftClick(){
         }
       }
       else{
-        for(var i = 0; i < nodesToLink.length; i++){
-          nodesToLink[i].colour = defaultColour
-        }
         nodesToLink = []
       }
       break;
-    case deleteNum: // Delete
+    case deleteState: // Delete
       if(!validLocation(x, y) && x < width - selectedBoxWidth){
         var node = getNodeClicked(x, y)
         deleteNode(node);
       }
       break;
-    case resistorNum: // add Resistor
+    case resistorState: // add Resistor
       if(validLocation(x, y)){
-        new Node("resistor", x, y, resistorRadius, []);
+        node = new Node("resistor", x, y, resistorRadius, []);
+        selectedNode = node
+        submitData()
       }
       break;
-    case voltageNum: // add voltageSrc
+    case voltageState: // add voltageSrc
       if(validLocation(x, y)){
-        node = new Node("voltageSrc", x, y, resistorRadius, []);
+        node = new Node("voltageSrc", x, y, voltageRadius, []);
+        selectedNode = node
         node.rotation = setRotation
+        submitData()
       }
       break;
-    case currentNum: // add currentSrc
+    case currentState: // add currentSrc
       if(validLocation(x, y)){
         node = new Node("currentSrc", x, y, resistorRadius, []);
+        selectedNode = node
         node.rotation = setRotation
+        submitData()
       }
       break;
-    case selectNum: // select mode
+    case selectState: // select mode
       if(!validLocation(x, y) && x < width - selectedBoxWidth){
         selectedNode = getNodeClicked(x, y)
         // sets the values of the input boxes when the node is selected
@@ -374,28 +417,33 @@ function drawSnapCircle(){
 
 //handles all keydown presses (any key is pressed down)
 $(document).keydown(function keyPressHandler(event){
+
   switch(event.which){
     //state changes
-    case 81: //q
-      clickState = 0
+    case wireKey: //q
+      clickState = wireState
       break;
-    case 87: //w
-      clickState = 1
+    case linkKey: //w
+      clickState = linkState
       break;
-    case 69: //e
-      clickState = 2
+    case selectKey: //e
+      clickState = selectState
       break;
-    case 82: //r
-      clickState = 3
+    case deleteKey: //r
+      clickState = deleteState
       break;
-    case 84: //t
-      clickState = 4
+    case resistorKey: //t
+      clickState = resistorState
       break;
-    case 89: //y
-      clickState = 5
+    case voltageKey: //y
+      clickState = voltageState
+      //reset data sheet
+      setDataSheet = false
       break;
-    case 85: //u
-      clickState = 6
+    case currentKey: //u
+      clickState = currentState
+      //reset data sheet
+      setDataSheet = false
       break;
 
     // toggles snap to grid

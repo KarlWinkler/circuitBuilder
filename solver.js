@@ -26,6 +26,7 @@ function solve(){
   }
 
   solveBySeriesAndParallel();
+  recursiveCalls = 0;
 
   // console.log(circuitNodes)
 }

@@ -2,7 +2,15 @@ var index = 0
 var savesArray = []
 
 function save(){
-  var fileName = "save file"
+  var fileName = prompt("What would you like to name your save?", "save " + index)
+
+  if(fileName == null){
+    return;
+  }
+  if(fileName == ""){
+    fileName = index
+  }
+
   var text
   console.log(text = createSaveData())
 
@@ -13,15 +21,17 @@ function save(){
   element.setAttribute('onclick', "load(" + index + ")");
 
   element.setAttribute("class", "save-link")
-  element.innerHTML = "save " + index
+  element.innerHTML = fileName
   // element.style.display = 'none';
 
 
   var br = document.createElement('br');
-  document.body.appendChild(br);
+  // document.body.appendChild(br);
   // element.click();
 
-  document.body.appendChild(element);
+  // document.body.appendChild(element);
+  $("#saveDiv").append(element)
+  $("#saveDiv").append(br)
 
   savesArray.push(text)
   index++

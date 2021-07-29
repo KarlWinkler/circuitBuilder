@@ -29,7 +29,7 @@ const dataSheetHeight = 200
 // variables
 
 // location of the nodes name in the stateNames array
-var nodeNum = 0;
+var nodeNumInArray = 0;
 // array for permitting changes to voltage/current/resistance
 var nodeDataSettings = [];
 
@@ -86,22 +86,22 @@ function drawGrid(){
 
 // global: snap to grid
 
-// State linkNum: what link mode is active and state of snapLink (on/off)
+// State linkState: what link mode is active and state of snapLink (on/off)
 
-// State voltageNum and currentNum: angle they are facing (maybe add direction arrow or something)
+// State voltageState and currentState: angle they are facing (maybe add direction arrow or something)
 
 function drawSubMenu(){
   switch(clickState){
-    case linkNum:
+    case linkState:
       // look at changing order mayhaps?
       var arr = ["SnapLink", snapLink, "Default", linkMode == 0, "Continuous", linkMode == 1, "Multi", linkMode == 2]
       subMenu(arr, arr.length/2 + 1)
       break;
-    case voltageNum:
+    case voltageState:
       var arr = [setRotation + "°", true]
       subMenu(arr, arr.length/2 + 1)
       break;
-    case currentNum:
+    case currentState:
       var arr = [setRotation + "°", true]
       subMenu(arr, arr.length/2 + 1)
       break;
@@ -143,7 +143,9 @@ function subMenu(labels, index){
 }
 
 // draws data sheet in the top left
-function drawDataSheet(node){
+function drawDataSheet(){
+
+  node = selectedNode
 
   nodeEnum(node.type)
 
@@ -155,7 +157,7 @@ function drawDataSheet(node){
   ctx.fillStyle = textColour
   ctx.font = "30px sans-serif"
   //make the text starting y a variabole dependant on the node type when I make custom titles Switch
-  ctx.fillText(stateNames[nodeNum], dataSheetWidth/8, dataSheetHeight/5)
+  ctx.fillText(stateNames[nodeNumInArray], dataSheetWidth/8, dataSheetHeight/5)
   ctx.font = "16px sans-serif"
 
   //fixing colour of text
@@ -198,11 +200,22 @@ function menuClick(){
   var currentY = menuY
 
   if(x > width - boxWidth && y < width - labelHeight*2){
+
+    //reset data sheet
+    setDataSheet = false
+
       for(var i = 0;  i < totalStates; i++){
         // console.log("current: " + currentY + " " + (currentY + boxHeight))
         if(i != clickState && y > currentY && y < currentY + boxHeight){
           // console.log(i)
           clickState = i;
+          if(i == voltageState){
+            $(document).trigger("keydown", voltageKey)
+            console.log(voltageKey)
+          }
+          if(i == currentState){
+            $(document).trigger("keydown", currentState)
+          }
           break;
         }
         else if(i == clickState){
@@ -250,19 +263,23 @@ function updateTheme(colours){
 function nodeEnum(name){
   switch(name){
     case "wire":
-      nodeNum = 0;
+      nodeNumInArray = 0;
       nodeDataSettings = [false, false, false]
       break;
     case "resistor":
-      nodeNum = 4;
+      nodeNumInArray = 4;
       nodeDataSettings = [false, false, true]
       break;
     case "voltageSrc":
-      nodeNum = 5;
+      nodeNumInArray = 5;
       nodeDataSettings = [true, false, false]
       break;
     case "currentSrc":
-      nodeNum = 6;
+      nodeNumInArray = 6;
       nodeDataSettings = [false, true, false]
+      break;
+    default:
+      stateNames.push(name)
+      nodeNumInArray = stateNames.length - 1
   }
 }
