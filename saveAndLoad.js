@@ -90,7 +90,7 @@ function download(){
   var element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
   element.setAttribute('download', fileName);
-
+  console.log('data:text/plain;charset=utf-8,' + encodeURIComponent(text))
   element.style.display = 'none';
   document.body.appendChild(element);
 
