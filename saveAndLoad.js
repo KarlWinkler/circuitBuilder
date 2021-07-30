@@ -73,8 +73,8 @@ function saveFromFile(fileName, text){
     $("#saveDiv").append(br)
 
     savesArray.push(text)
-    index++
     currentSave = index
+    index++  
 }
 
 function download(){
