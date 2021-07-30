@@ -50,6 +50,10 @@ button{
   background-color: #666;
 }
 
+.zero-margin-break{
+  margin: 0;
+}
+
 .data-form{
   margin-top: 10px;
 }
