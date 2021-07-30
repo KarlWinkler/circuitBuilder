@@ -231,12 +231,12 @@ function menuClick(){
 function themeSelect(theme){
   switch(theme){
     case 0: // lightMode
-      updateTheme(["white", "black", "rgba(0,0,0,0.2)", "orange", "red", "black","rgba(75,75,75,1)",
-                   "rgba(30,30,30,1)", "rgba(0,0,0,0.1)", "rgba(255, 0, 0, 0.5)",
-                   "rgba(255, 0, 0, 0.1)", "rgba(0,0,0,0.7)"])
+      updateTheme(["white", "black", "rgb(204,204,204)", "orange", "red", "black","rgb(75,75,75)",
+                   "rgb(30,30,30)", "rgb(230,230,230)", "rgba(255, 0, 0, 0.5)",
+                   "rgba(255, 0, 0, 0.1)", "rgb(77,77,77)"])
       break;
     case 1: // darkMode
-      updateTheme(["rgba(0,0,0,0.7)", "white", "rgba(255,255,255,0.2)", "orange",
+      updateTheme(["rgb(77,77,77)", "white", "rgba(255,255,255,0.2)", "orange",
         "red", "rgba(255,255,255,0.7)", "rgba(150,150,150,1)", "rgba(200,200,200,1)", "rgba(255,255,255,0.1)",
         "rgba(50,50,50,0.5)", "rgba(50,50,50,0.1)", "rgba(255,255,255,0.7)"])
       break;
@@ -256,6 +256,7 @@ function updateTheme(colours){
   mainColour = colours[9]
   secondaryColour = colours[10]
   defaultColourMedium = colours[11]
+  $('body').css("background-color", colours[0])
 }
 
 // useful information for each node type so that I dont have to type shit out all the timeout

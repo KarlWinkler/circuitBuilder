@@ -1,6 +1,10 @@
+body{
+  background-color: #fff;
+}
+
 h1{
   font-family: sans-serif;
-
+  display: inline-block;
 }
 
 button{
@@ -28,7 +32,15 @@ button{
 }
 
 #data-submit{
-  margin: 20px 0 0 50px;
+  padding: 7px 16px;
+  margin: 20px 0 0 55px;
+  background-color: grey;
+}
+
+#data-submit:hover{
+  padding: 7px 16px;
+  margin: 20px 0 0 55px;
+  background-color: #666;
 }
 
 .data-form{
@@ -47,14 +59,12 @@ button{
 
 .solve-button{
   margin-left: 0px;
-  background-color: rgb(255,127.5,127.5);
-  background-color: rgba(255,0,0,0.5);
+  background-color: rgb(255,128,128);
 }
 
 .solve-button:hover{
   margin-left: 0px;
-  background-color: rgb(0,127.5,127.5);
-  background-color: rgba(0,127.5,127.5,0.5);
+  background-color: rgb(228,128,128);
 }
 
 .darkMode-button{
@@ -69,7 +79,7 @@ button{
 
 .lightMode-button{
   color: black;
-  background-color: #e7e7e7;
+  background-color: #eee;
 }
 
 .lightMode-button:hover{
@@ -78,21 +88,35 @@ button{
 }
 
 .save-button{
-  margin-left: 600px;
+  margin-left: 575px;
   background-color: #4ca;
 }
 
 .save-button:hover{
-  margin-left: 600px;
-  background-color: #b35;
+  margin-left: 575px;
+  background-color: #3b9;
 }
 
 .save-link{
-  background-color: #2a8;
+  background-color: #4ca;
 }
 
 .save-link:hover{
-  background-color: #d75;
+  background-color: #3b9;
+}
+
+.download-button{
+  position: relative;
+  top: -50px;
+  margin: 0;
+  background-color: #4ca;
+}
+
+.download-button:hover{
+  position: relative;
+  top: -50px;
+  margin: 0;
+  background-color: #3b9;
 }
 
 .save-div{
@@ -100,5 +124,6 @@ button{
   margin-top: 16px;
   width: 30%;
   height: 1200px;
+  padding-left: 10px;
   background-color: #ddffdd;
 }
