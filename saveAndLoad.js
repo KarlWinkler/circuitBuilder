@@ -63,7 +63,7 @@ function download(){
   element.style.display = 'none';
   document.body.appendChild(element);
 
-  // element.click(); // commented to disable downloading, so that I dont download a million txt files
+  element.click(); // commented to disable downloading, so that I dont download a million txt files
 
   document.body.removeChild(element);
 }
