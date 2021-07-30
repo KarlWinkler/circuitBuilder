@@ -224,13 +224,15 @@ function drawNodes(){
         break;
     }
   }
-  if(selectedNode != null && selectedNode.x == -10 && selectedNode.y == -10){
+  if(selectedNode != null){
 
     if(!setDataSheet){
-          console.log(selectedNode.type)
-      $("#voltage-input").prop('value', 0)
-      $("#current-input").prop('value', 0)
-      $("#resistance-input").prop('value', 0)
+      // console.log(selectedNode.type)
+      if(selectedNode.x == -10 && selectedNode.y == -10){
+        $("#voltage-input").prop('value', 0)
+        $("#current-input").prop('value', 0)
+        $("#resistance-input").prop('value', 0)
+      }
       $("#dataSheetForm").show();
       setDataSheet = true
     }
