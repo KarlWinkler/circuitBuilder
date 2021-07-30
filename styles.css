@@ -5,6 +5,13 @@ body{
 h1{
   font-family: sans-serif;
   display: inline-block;
+  margin-bottom: 10px;
+}
+
+h6{
+  font-family: sans-serif;
+  display: inline-block;
+  margin: 0;
 }
 
 button{

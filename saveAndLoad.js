@@ -1,5 +1,6 @@
 var index = 0
 var savesArray = []
+var currentSave = 0
 
 function save(){
   var fileName = prompt("What would you like to name your save?", "save " + index)
@@ -8,7 +9,7 @@ function save(){
     return;
   }
   if(fileName == ""){
-    fileName = index
+    fileName = "save " + index
   }
 
   var text
@@ -18,9 +19,9 @@ function save(){
 // can also be found on other sites but this is the site I used
   var element = document.createElement('button');
   // element.setAttribute('href', '');
-  element.setAttribute('onclick', "load(" + index + ")");
+  element.setAttribute('onclick', "loadFromIndex(" + index + ")");
 
-  element.setAttribute("class", "save-link")
+  element.setAttribute("class", "save-link save-link" + index)
   element.innerHTML = fileName
   // element.style.display = 'none';
 
@@ -35,6 +36,7 @@ function save(){
 
   savesArray.push(text)
   index++
+  currentSave = index
 //trying to make it so I can create links to saved circuits with images on the sites
 //maybe just scrap the idea of an imgae right now because holy fuck is it annoying to implement
 
@@ -50,9 +52,38 @@ function save(){
   // // var saveImage = canvas.toDataURL();
 }
 
+function saveFromFile(fileName, text){
+  // code from https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
+  // can also be found on other sites but this is the site I used
+    var element = document.createElement('button');
+    // element.setAttribute('href', '');
+    element.setAttribute('onclick', "loadFromIndex(" + index + ")");
+
+    element.setAttribute("class", "save-link save-link" + index)
+    element.innerHTML = fileName
+    // element.style.display = 'none';
+
+
+    var br = document.createElement('br');
+    // document.body.appendChild(br);
+    // element.click();
+
+    // document.body.appendChild(element);
+    $("#saveDiv").append(element)
+    $("#saveDiv").append(br)
+
+    savesArray.push(text)
+    index++
+    currentSave = index
+}
+
 function download(){
-  var fileName = "save file"
-  var text
+  console.log(".save-link" + (currentSave))
+  var fileName = $(".save-link" + (currentSave)).html()
+  if(fileName == null){
+    fileName = "save " + currentSave
+  }
+  var text = createSaveData()
 
 // code from https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
 // can also be found on other sites but this is the site I used
@@ -63,15 +94,20 @@ function download(){
   element.style.display = 'none';
   document.body.appendChild(element);
 
-  // element.click(); // commented to disable downloading, so that I dont download a million txt files
+  element.click(); // commented to disable downloading, so that I dont download a million txt files
 
   document.body.removeChild(element);
 }
 
-function load(arrayIndex){
+function loadFromIndex(index){
+  load(savesArray[index])
+  currentSave = index
+}
+
+function load(toLoad){
   var objectsArray = []
 
-  var linesArray = savesArray[arrayIndex].split("\n");
+  var linesArray = toLoad.split("\n");
   linesArray.pop()
   for(var i = 0; i < linesArray.length; i++){
     var objectSectionsArray = linesArray[i].split("|")
@@ -110,13 +146,13 @@ function load(arrayIndex){
       j++
     }
   }
-  console.log(objectsArray)
+  // console.log(objectsArray)
 
   graphArr = []
   for(var i = 0; i < objectsArray.length; i++){
     graphArr.push(objectsArray[i])
   }
-  console.log(graphArr)
+  // console.log(graphArr)
 }
 
 function findEqualNodeXY(array, x, y){
@@ -151,6 +187,37 @@ function createSaveData(){
   return fileString
 }
 
-function createSaveFile(){
+function parseAndLoadFile(fileToRead){
+  var reader = new FileReader();
+  var text
 
+  reader.onload = function() {
+      text = reader.result;
+      console.log(text);
+      load(text)
+      saveFromFile(fileToRead.name, text)
+  };
+
+  reader.readAsBinaryString(fileToRead)
 }
+
+
+// following two functions are based on code from https://web.dev/read-files/#select-dnd
+const dropArea = document.getElementById('saveDiv');
+var t
+
+dropArea.addEventListener('dragover', (event) => {
+  event.stopPropagation();
+  event.preventDefault();
+  $('#saveDiv').css('background-color', "#ccffcc")
+  // Style the drag-and-drop as a "copy file" operation.
+  event.dataTransfer.dropEffect = 'copy';
+})
+
+dropArea.addEventListener('drop', (event) => {
+  event.stopPropagation();
+  event.preventDefault();
+  $('#saveDiv').css('background-color', "#ddffdd")
+  const fileList = event.dataTransfer.files;
+  t = parseAndLoadFile(fileList[0])
+})
