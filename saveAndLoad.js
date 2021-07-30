@@ -37,7 +37,7 @@ function save(){
   savesArray.push(text)
   currentSave = index
   index++
-  
+
 //trying to make it so I can create links to saved circuits with images on the sites
 //maybe just scrap the idea of an imgae right now because holy fuck is it annoying to implement
 
@@ -188,6 +188,7 @@ function createSaveData(){
   return fileString
 }
 
+// some code from https://www.javascripture.com/FileReader
 function parseAndLoadFile(fileToRead){
   var reader = new FileReader();
   var text
