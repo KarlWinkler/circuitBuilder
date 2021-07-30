@@ -13,7 +13,7 @@ function save(){
   }
 
   var text
-  console.log(text = createSaveData())
+  text = createSaveData()
 
 // code from https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
 // can also be found on other sites but this is the site I used
@@ -74,12 +74,12 @@ function saveFromFile(fileName, text){
     $("#saveDiv").append(br)
 
     savesArray.push(text)
-    index++
     currentSave = index
+    index++  
 }
 
 function download(){
-  console.log(".save-link" + (currentSave))
+//   console.log(".save-link" + (currentSave))
   var fileName = $(".save-link" + (currentSave)).html()
   if(fileName == null){
     fileName = "save " + currentSave
@@ -91,7 +91,7 @@ function download(){
   var element = document.createElement('a');
   element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
   element.setAttribute('download', fileName);
-
+//   console.log('data:text/plain;charset=utf-8,' + encodeURIComponent(text))
   element.style.display = 'none';
   document.body.appendChild(element);
 
@@ -195,7 +195,7 @@ function parseAndLoadFile(fileToRead){
 
   reader.onload = function() {
       text = reader.result;
-      console.log(text);
+//    console.log(text);
       load(text)
       saveFromFile(fileToRead.name, text)
   };
